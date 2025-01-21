@@ -34,7 +34,7 @@ function HashAut() {
     };
 
     return (
-        <div style={{ backgroundColor: "#f5f5f5", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ backgroundImage: "url('../../public/aut/BGAUT.png')", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <div style={{ width: "600px", padding: "40px", backgroundColor: "rgba(0, 0, 0, 0.9)", color: "white", textAlign: "center", borderRadius: "15px", boxShadow: "0px 0px 20px rgba(0, 0, 255, 1)", border: "5px solid white", fontFamily: "Arial, sans-serif" }}>
                 <img src="../../public/aut/nullavatar.png" alt="" style={{ width: "150px", height: "150px", borderRadius: "50%", marginBottom: "20px" }} />
                 <h1 style={{ fontSize: "30px", fontWeight: "bold", marginBottom: "20px" }}>อาจารย์ ดร. วิชัย</h1>
@@ -52,7 +52,7 @@ function HashAut() {
                 <input 
                     type="number" 
                     onChange={(e) => SetPassword(e.target.value)}
-                    style={{ width: "400px", height: "40px", fontSize: "16px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginTop: "20px" }}
+                    style={{ fontWeight: 700, fontSize: "35px", width: "400px", height: "40px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginTop: "20px" }}
                 />
 
                 <button
@@ -64,12 +64,12 @@ function HashAut() {
 
             </div>
 
-            <div style={{ width: "700px", padding: "40px", backgroundColor: "rgba(0, 0, 0, 0.9)", color: "white", textAlign: "center", borderRadius: "15px", boxShadow: "0px 0px 20px rgba(0, 0, 255, 1)", border: "5px solid white", fontFamily: "Arial, sans-serif" }}>
+            <div style={{ marginLeft: "70px", width: "700px", padding: "40px", backgroundColor: "rgba(0, 0, 0, 0.9)", color: "white", textAlign: "center", borderRadius: "15px", boxShadow: "0px 0px 20px rgba(0, 0, 255, 1)", border: "5px solid white", fontFamily: "Arial, sans-serif" }}>
                 <p style={{ fontSize: "18px", lineHeight: "1.5", marginBottom: "20px" }}>โปรดกรอกข้อความเพื่อแปลงค่าเป็น SHA256</p>
                 <input 
                     type="text"
                     onChange={(e) => SetInputToHash(e.target.value)}
-                    style={{ width: "400px", height: "40px", fontSize: "16px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginBottom: "20px" }}
+                    style={{ fontWeight: 700, fontSize: "35px", width: "400px", height: "40px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginBottom: "20px" }}
                 />
 
                 <button 
@@ -85,7 +85,7 @@ function HashAut() {
                     </p>
                 )}
                 {hashedValue === hashAns && (
-                    <p style={{ fontSize: "20px", color: "lime", marginTop: "15px" }}>
+                    <p style={{ fontWeight: 500, fontSize: "30px", color: "lime", marginTop: "15px" }}>
                         ✅ ผลการ Hash ตรงกับที่ต้องการ
                     </p>
                 )}
