@@ -47,7 +47,7 @@ import { useRoutes, RouteObject } from "react-router-dom";
 const Main = lazy(() => import("../pages/Main"));
 const Jo = lazy(() => import("../pages/Symmetric02"));
 const Aut = lazy(() => import("../pages/HashAut03"));
-const Dew = lazy(() => import("../pages/Asymmetric04"));
+const Dew = lazy(() => import("../pages/symmetric04"));
 const Palm = lazy(() => import("../pages/HashedPalm05"));
 
 const ConfigRoutes = () => {
