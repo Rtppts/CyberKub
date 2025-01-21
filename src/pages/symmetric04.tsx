@@ -53,6 +53,10 @@ const App = () => {
     setDecryptedKey(userPrivateKey);
   };
 
+
+
+
+  /////
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center", backgroundColor: "#222", color: "white", minHeight: "100vh" }}>
       <h1>🔐 RSA Encrypted Student Grades</h1>
