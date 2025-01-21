@@ -8,7 +8,7 @@ const Palm = () => {
 
   const navigate = useNavigate();
   const targetWord = sha256("หอสุรนภา").toString(); // เปลี่ยนเป็น sha256 ของคำที่ต้องการ
-  const flag = "หอสุรนภา";
+  const flag = "ยินดีด้วยคุณรู้สถานที่ลับนี้แล้ว";
   const hints = [
     "Hint 1: มีรหัสของนักศึกษาคนนึงแปลกๆ ดูเหมือนจะเป็นเลขของตำแหน่งบางอย่าง",
     "Hint 2: โดดเด่น",
@@ -91,7 +91,7 @@ const Palm = () => {
       ) : (
         <div style={styles.successContainer}>
           <p style={styles.successMessage}>{feedback}</p>
-          <p style={styles.flag}>Answer: {flag}</p>
+          <p style={styles.flag}>Congratulations : {flag}</p>
         </div>
       )}
 
