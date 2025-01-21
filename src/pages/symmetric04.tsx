@@ -103,7 +103,7 @@ const App = () => {
       </div>
 
       {/* ปุ่ม Next */}
-      <button style={{ marginTop: "20px", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", cursor: "pointer" }} onClick={() => navigate("/nextPage")}>
+      <button style={{ marginTop: "20px", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", cursor: "pointer" }} onClick={() => navigate("/palm")}>
         Next ➡
       </button>
     </div>
