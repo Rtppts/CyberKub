@@ -1,159 +1,165 @@
+// Import React และ useNavigate
 import React, { useState } from "react";
-import CryptoJS from "crypto-js";
+import { useNavigate } from "react-router-dom";
 
-import { useNavigate } from "react-router-dom"
-
-const App = () => {
-  const navigate = useNavigate();
-
-  const secretKey = "secretKey123";
-  const encryptedClue = CryptoJS.AES.encrypt("AccessToken123", secretKey).toString(); // สร้างข้อความเข้ารหัส
-
-  const [inputKey, setInputKey] = useState("");
-  const [decryptedToken, setDecryptedToken] = useState("");
-  const [response, setResponse] = useState("");
-
-  // Handle decryption
-  const handleDecrypt = () => {
-    try {
-      const bytes = CryptoJS.AES.decrypt(encryptedClue, inputKey);
-      const token = bytes.toString(CryptoJS.enc.Utf8);
-
-      if (token) {
-        setDecryptedToken(token);
-        setResponse("Decryption successful! Use this Token: " + token);
-      } else {
-        setResponse("Decryption failed. Incorrect key.");
-      }
-    } catch (error) {
-      setResponse("An error occurred. Please try again.");
-    }
-  };
-
-  // Handle token submission
-  const handleSubmitToken = () => {
-    if (decryptedToken === "AccessToken123") {
-      setResponse("Login successful! You have accessed the system.");
+// ฟังก์ชันสำหรับเข้ารหัสและถอดรหัสแบบ Symmetric (Caesar Cipher ตัวอย่าง)
+const caesarEncrypt = (message: string | string[], key: number) => {
+  let encrypted = "";
+  for (let i = 0; i < message.length; i++) {
+    const charCode = (message as string).charCodeAt(i);
+    if (charCode >= 32 && charCode <= 126) { // จำกัดเฉพาะ ASCII ที่พิมพ์ได้
+      encrypted += String.fromCharCode(((charCode - 32 + key) % 95) + 32);
     } else {
-      setResponse("Invalid token. Try again.");
+      encrypted += message[i];
+    }
+  }
+  return encrypted;
+};
+
+const caesarDecrypt = (encrypted: string | string[], key: number) => {
+  let decrypted = "";
+  for (let i = 0; i < encrypted.length; i++) {
+    const charCode = (encrypted as string).charCodeAt(i);
+    if (charCode >= 32 && charCode <= 126) { // จำกัดเฉพาะ ASCII ที่พิมพ์ได้
+      decrypted += String.fromCharCode(((charCode - 32 - key + 95) % 95) + 32);
+    } else {
+      decrypted += encrypted[i];
+    }
+  }
+  return decrypted;
+};
+
+const Sym = () => {
+  // ตารางสี 3x3 พร้อมชื่ออาจารย์
+  const squares = [
+    { color: "#99ccff", name: "อาจารย์ปริญ" }, // ฟ้าอ่อน
+    { color: "#66b2ff", name: "อาจารย์ฟาง" }, // ฟ้าสด
+    { color: "#3399ff", name: "อาจารย์วิชัย" }, // น้ำเงินสด
+    { color: "#4da6ff", name: "อาจารย์คมศัลล์" }, // ฟ้าสดใส
+    { color: "#80bfff", name: "อาจารย์สุภาพร" }, // ฟ้าอ่อนพิเศษ
+    { color: "#b3d9ff", name: "อาจารย์คะชา" }, // ฟ้าขาว
+    { color: "#99e6e6", name: "อาจารย์กิติศักดิ์" }, // เขียวมิ้นท์
+    { color: "#66cccc", name: "อาจารย์นิตยา" }, // เขียวเข้ม
+  ];
+  
+
+  // คำใบ้ที่เข้ารหัสและ key สำหรับแต่ละคำใบ้
+  const hints = [
+    { text: caesarEncrypt("เซ่น", 5801000), key: 5801000 },
+    { text: caesarEncrypt("สอนปีสอง", 10400), key: 10400 },
+    { text: caesarEncrypt("เจอบ่อยสุด", 4070), key: 4070 },
+  ];
+
+  // สถานะของเกม
+  const [currentHints, setCurrentHints] = useState<string[]>([]);
+  const [inputKey, setInputKey] = useState("");
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนเส้นทาง
+
+  // เป้าหมายที่ถูกต้อง (สุ่ม)
+  const targetColor = "blue";
+
+  // ฟังก์ชันสำหรับปลดล็อกคำใบ้
+  // ฟังก์ชันสำหรับปลดล็อกคำใบ้
+  const unlockHint = (hintIndex: number) => {
+    const key = parseInt(inputKey, 10);
+
+    // ตรวจสอบว่าปลดล็อกคำใบ้ก่อนหน้าหรือยัง
+    if (hintIndex > 0 && !currentHints.includes(caesarDecrypt(hints[hintIndex - 1].text, hints[hintIndex - 1].key))) {
+      setMessage("หาคำใบ้ก่อนหน้าก่อนค่อยใบ้ข้อนี้ได้.");
+      return;
+    }
+
+    // ตรวจสอบ key
+    if (!isNaN(key) && key === hints[hintIndex].key) {
+      setCurrentHints((prevHints) => [...prevHints, caesarDecrypt(hints[hintIndex].text, key)]);
+      setMessage("Hint unlocked!");
+    } else {
+      setMessage("Incorrect key! Try again.");
     }
   };
+
+
+  // ฟังก์ชันสำหรับการเลือกสี
+  const selectColor = (color: string) => {
+    setSelectedColor(color);
+    if (color === targetColor) {
+      setMessage("Congratulations! You found the target color.");
+      setTimeout(() => navigate("/HashAut03"), 2000); // เปลี่ยนเส้นทางหลัง 2 วินาที
+    } else {
+      window.alert("คุณตอบผิด! เกมจบแล้ว ระบบจะนำคุณไปที่หน้า Main");
+      navigate("/Main");
+    }
+  };
+
+
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>Challenge-Response Authentication</h1>
-      <div
-        style={{
-          marginTop: "20px",
-          padding: "10px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <h2>Encrypted Clue</h2>
-        <p>{encryptedClue}</p>
+    <div style={{ textAlign: "center", fontFamily: "Arial" }}>
+      <h1>จงเดาว่าใครให้ F กับคุณ</h1>
+      <p>คุณต้องเดาให้ถูกว่าใครให้ F กับคุณโดยคุณสามารถเดาได้ 1 ครั้ง!</p>
+      <p>คำใบ้แรกเป็นเลขที่เกี่ยวกับสัญลักษณ์มอ คำใบ้ที่สอง"ติดต่อ หน่วยประสานงาน มทส" คำใบ้ที่สามมันอยู่ใน footer เว็บสัญลักษณ์มอนั่นแหละไปหาเอา</p>
+
+      {/* กระดานเกม */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)", gap: "10px", justifyContent: "center" }}>
+        {squares.map((square, index) => (
+          <div
+            key={index}
+            onClick={() => selectColor(square.color)}
+            style={{
+              width: "100px",
+              height: "100px",
+              backgroundColor: square.color,
+              border: selectedColor === square.color ? "3px solid black" : "1px solid gray",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {square.name}
+          </div>
+        ))}
       </div>
 
-      <div
-        style={{
-          marginTop: "20px",
-          padding: "10px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <h2>Decrypt the Clue</h2>
+      {/* ป้อน Key เพื่อปลดล็อกคำใบ้ */}
+      <div style={{ marginTop: "20px" }}>
         <input
           type="text"
+          placeholder="Enter key to unlock hint"
           value={inputKey}
           onChange={(e) => setInputKey(e.target.value)}
-          placeholder="Enter the decryption key"
-          style={{
-            width: "100%",
-            padding: "8px",
-            marginBottom: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-          }}
         />
-        <button
-          onClick={handleDecrypt}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Decrypt
-        </button>
-        <p style={{ marginTop: "10px" }}>{response}</p>
+        <button onClick={() => unlockHint(0)}>Unlock Hint 1</button>
+        <button onClick={() => unlockHint(1)}>Unlock Hint 2</button>
+        <button onClick={() => unlockHint(2)}>Unlock Hint 3</button>
       </div>
 
-      <div
-        style={{
-          marginTop: "20px",
-          padding: "10px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <h2>Submit the Token</h2>
-        <button
-          onClick={handleSubmitToken}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Submit Token
-        </button>
-        <p style={{ marginTop: "10px" }}>{response}</p>
-      </div>
+      {/* แสดงคำใบ้ */}
+      {currentHints.length > 0 && (
+        <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+          <p>Hints:</p>
+          <ul>
+            {currentHints.map((hint, index) => (
+              <li key={index}>{hint}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-      <button style={{ width: "200px", height: "70px", fontSize: "50px" }} onClick={() => navigate("/HashAut03")}>
-        NEXT
-      </button>
-      
-      <button
-        onClick={() => navigate("/symmetric02")}
-        
-      >
-        Back
-      </button>
-
-
+      {/* แสดงข้อความ */}
+      {message && (
+        <div style={{ marginTop: "20px", color: message.includes("Congratulations") ? "green" : "red" }}>
+          <p>{message}</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default App;
-
-
-
-// <button style={{ width: "200px", height: "70px", fontSize: "50px" }} onClick={() => navigate("/HashAut03")}>
-// NEXT
-// </button>
-// <button
-// onClick={() => navigate("/symmetric02")}
-
-// >
-// Back
-// </button>
-// const navigate = useNavigate();
-
-
-
-
-{/* <button onClick={() => localStorage.setItem("checkpoint", "2")}>
-    NEXT
-</button> */}
+export default Sym;
