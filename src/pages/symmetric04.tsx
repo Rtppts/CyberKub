@@ -1,123 +1,107 @@
 import React, { useState } from "react";
-import CryptoJS from "crypto-js";
-import { useNavigate } from "react-router-dom"
-const secretKey = "secretKey"; // Key for encryption/decryption
-const demoPassword = "eng234014"; // Example password for access
+import { useNavigate } from "react-router-dom";
 
-// Sample data (encrypted)
-const gradeOptions = ["A", "B", "C", "D", "F", "B+", "C+", "D+"];
-const thaiNames = [
-  "สมชาย ใจดี", "สมหญิง รักเรียน", "ธีรภัทร เก่งมาก", "อรวรรณ ขยันดี", "ณัฐวุฒิ ฉลาดมาก",
-  "กิตติพงษ์ ใจเย็น", "สุพัตรา อดทน", "วรนุช รักดี", "สมพงษ์ ตั้งใจ", "ปริญญา ขยัน",
-  "อนุชา กล้าหาญ", "มานพ มั่นคง", "กาญจนา สุขใจ", "ปรเมศวร์ ฉลาดสุด", "วิไลลักษณ์ สงบเย็น",
-  "ยุทธนา วิริยะ", "ปัทมา ซื่อตรง", "ศิริพร อดกลั้น", "อภิสิทธิ์ ขยันมาก", "เกศินี สมบูรณ์",
-  "สุนิสา สง่างาม", "อนุวัฒน์ จริงใจ", "อรพรรณ พากเพียร", "ศราวุธ มานะ", "จันทนา สดใส",
-  "ปัญญา สุขสันต์", "สมบัติ แน่วแน่", "อัมพร สุขสม", "ปิยะนุช ตั้งใจ", "สุกัญญา มั่นใจ"
+// 🔑 กำหนดค่าของ RSA
+const n = 3233;  // Modulus n (จำนวนเฉพาะใหญ่)
+const e = 17;    // Public Exponent e
+const d = 2753;  // Private Exponent d (ถูกต้อง)
+
+// ฟังก์ชันคำนวณเลขยกกำลังโมดูลัส (Modular Exponentiation)
+const modExp = (base: number, exp: number, mod: number) => {
+  let result = 1;
+  base = base % mod;
+  while (exp > 0) {
+    if (exp % 2 === 1) result = (result * base) % mod;
+    exp = Math.floor(exp / 2);
+    base = (base * base) % mod;
+  }
+  return result;
+};
+
+// ฟังก์ชันเข้ารหัสข้อความ (P → C)
+const encrypt = (text: string) => {
+  return text.split("").map(char => modExp(char.charCodeAt(0), e, n));
+};
+
+// ฟังก์ชันถอดรหัสข้อความ (C → P)
+const decrypt = (encryptedArray: number[], userInput: number) => {
+  // ใช้ค่า `d` เสมอ
+  const privateKeyToUse = userInput === d ? d : userInput;
+  return encryptedArray.map(num => String.fromCharCode(modExp(num, privateKeyToUse, n))).join("");
+};
+
+// 🔐 สร้างข้อมูลตัวอย่างที่ถูกเข้ารหัส
+const sampleData = [
+  { id: 1, studentId: encrypt("S10001"), name: encrypt("John Doe"), grade: encrypt("A") },
+  { id: 2, studentId: encrypt("S10002"), name: encrypt("Jane Smith"), grade: encrypt("B+") },
+  { id: 3, studentId: encrypt("S10003"), name: encrypt("Robert Brown"), grade: encrypt("C") },
+  { id: 4, studentId: encrypt("S10004"), name: encrypt("Emily Davis"), grade: encrypt("D+") },
+  { id: 5, studentId: encrypt("S10005"), name: encrypt("Michael White"), grade: encrypt("F") },
 ];
 
-const sampleData = Array.from({ length: 30 }, (_, index) => ({
-  id: index + 1,
-  studentId: CryptoJS.AES.encrypt(`S${10000 + index}`, secretKey).toString(),
-  name: CryptoJS.AES.encrypt(thaiNames[index], secretKey).toString(),
-  grade: CryptoJS.AES.encrypt(gradeOptions[Math.floor(Math.random() * gradeOptions.length)], secretKey).toString(),
-}));
-
 const App = () => {
-
   const navigate = useNavigate();
-  const [data, setData] = useState(sampleData);
-  const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
+  const [privateKeyInput, setPrivateKeyInput] = useState("");
+  const [decryptedKey, setDecryptedKey] = useState<number | null>(null);
 
-  const handleLogin = () => {
-    if (password === demoPassword) {
-      setAuthenticated(true);
-    } else {
-      alert("Incorrect password! Try Again 'You can see the help below'");
+  const handleDecrypt = () => {
+    const userPrivateKey = parseInt(privateKeyInput.trim(), 10);
+    if (isNaN(userPrivateKey)) {
+      alert("❌ กรุณาใส่ Private Key เป็นตัวเลข!");
+      return;
     }
-  };
-
-  const decryptData = (encryptedText: any) => {
-    try {
-      const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey);
-      return bytes.toString(CryptoJS.enc.Utf8) || "[Decryption Error]";
-    } catch (error) {
-      console.error("Decryption failed:", error);
-      return "[Error]";
-    }
-  };
-
-  const handleEditGrade = (id: number) => {
-    const newGrade = prompt("Enter new grade (A, B, C, D, F, B+, C+, D+):");
-    if (newGrade && gradeOptions.includes(newGrade)) {
-      setData(data.map(item => 
-        item.id === id ? { ...item, grade: CryptoJS.AES.encrypt(newGrade, secretKey).toString() } : item
-      ));
-    } else {
-      alert("Invalid grade entered!");
-    }
-  };
-
-  const handleDelete = (id: number) => {
-    setData(data.filter(item => item.id !== id));
+    setDecryptedKey(userPrivateKey);
   };
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px", backgroundColor: "#000000", textAlign: "center",height:"900px" }}>
-      <h1 style={{ color: "#FFFFFF" }}>Cyber Security Student Grades</h1>
-      {!authenticated ? (
-        <div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password to unlock"
-            style={{ padding: "10px", marginRight: "10px" }}
-          />
-          <button onClick={handleLogin} style={{ padding: "10px 20px", cursor: "pointer", backgroundColor: "#28a745", color: "white", border: "none" }}>
-            Unlock
-          </button>
-          <div style={{ backgroundColor: "#333", color: "#fff", padding: "10px", marginBottom: "10px", borderRadius: "5px",height:"600px",marginTop: "10px" }}>
-            
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div style={{ maxHeight: "750px", overflowY: "auto", margin: "20px auto", width: "80%", backgroundColor: "white", border: "1px solid #ddd" }}>
-            <table border={1} style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#28a745", color: "white" }}>
-                  <th>ID</th>
-                  <th>Student ID</th>
-                  <th>Name</th>
-                  <th>Grade</th>
-                  <th>Manages</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map(item => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{decryptData(item.studentId)}</td>
-                    <td>{decryptData(item.name)}</td>
-                    <td>{decryptData(item.grade)}</td>
-                    <td>
-                      <button onClick={() => handleEditGrade(item.id)} style={{ marginRight: "5px", backgroundColor: "#ffc107", border: "none", padding: "5px", cursor: "pointer" }}>Edit</button>
-                      <button onClick={() => handleDelete(item.id)} style={{ backgroundColor: "#dc3545", color: "white", border: "none", padding: "5px", cursor: "pointer" }}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button style={{ padding: "10px 20px", backgroundColor: "#28a745", color: "white", border: "none", cursor: "pointer" }}>Save</button>
-            
-            <button style={{ width: "200px", height: "70px", fontSize: "50px" }} onClick={() => navigate("/symmetric02")}>
-              NEXT
-            </button>
-            
-        </div>
-      )}
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center", backgroundColor: "#222", color: "white", minHeight: "100vh" }}>
+      <h1>🔐 RSA Encrypted Student Grades</h1>
+
+      {/* Input Private Key */}
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          type="text"
+          value={privateKeyInput}
+          onChange={(e) => setPrivateKeyInput(e.target.value)}
+          placeholder="🔑 ใส่ Private Key เพื่อตรวจสอบ"
+          style={{ padding: "10px", width: "300px" }}
+        />
+        <button
+          onClick={handleDecrypt}
+          style={{ marginLeft: "10px", padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", cursor: "pointer" }}
+        >
+          🔍 ตรวจสอบ
+        </button>
+      </div>
+
+      {/* แสดงตาราง */}
+      <div style={{ maxWidth: "80%", margin: "0 auto", backgroundColor: "#fff", color: "black", padding: "20px", borderRadius: "10px" }}>
+        <table border={1} style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ backgroundColor: "#28a745", color: "white" }}>
+              <th>ID</th>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sampleData.map(item => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{decryptedKey !== null ? decrypt(item.studentId, decryptedKey) : "🔒 [Encrypted]"}</td>
+                <td>{decryptedKey !== null ? decrypt(item.name, decryptedKey) : "🔒 [Encrypted]"}</td>
+                <td>{decryptedKey !== null ? decrypt(item.grade, decryptedKey) : "🔒 [Encrypted]"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ปุ่ม Next */}
+      <button style={{ marginTop: "20px", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", cursor: "pointer" }} onClick={() => navigate("/nextPage")}>
+        Next ➡
+      </button>
     </div>
   );
 };
