@@ -1,8 +1,10 @@
-import React from "react";
-import ConfigRoutes from "./routes/mainroutes"; // ✅ Path ถูกต้องแล้ว
+import React from 'react';
+import ConfigRoutes from './routes/mainroutes';
 
 const App: React.FC = () => {
-  return <ConfigRoutes />;
+  return (
+      <ConfigRoutes />
+  );
 };
 
 export default App;
