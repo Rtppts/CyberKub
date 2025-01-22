@@ -6,23 +6,8 @@ on:
       - deploy
 
 jobs:
-  test_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm install --force
-      - name: Run build
-        run: |
-          cd frontend
-          npm run build
-
   build_and_push_frontend:
     runs-on: ubuntu-latest
-    needs: test_frontend
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -39,6 +24,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           file: frontend/Dockerfile
-          context: .
+          context: frontend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/se-67-frontend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cyberkub-frontend:latest
