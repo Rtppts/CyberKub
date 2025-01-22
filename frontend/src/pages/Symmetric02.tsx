@@ -1,5 +1,5 @@
 // Import React และ useNavigate
-import React, { useState } from "react";
+import /*React,*/ { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // ฟังก์ชันสำหรับเข้ารหัสและถอดรหัสแบบ Symmetric (Caesar Cipher ตัวอย่าง)

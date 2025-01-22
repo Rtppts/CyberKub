@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { SetStateAction, useState } from "react";
+import { /*SetStateAction,*/ useState } from "react";
 import sha256 from "crypto-js/sha256";
 
 function HashAut() {
