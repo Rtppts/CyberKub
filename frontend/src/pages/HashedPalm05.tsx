@@ -48,7 +48,7 @@ const Palm = () => {
   };
 
   return (
-    <div style={{ backgroundImage: "url('../../public/palm/BGPALM.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", overflowX: "hidden", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center"}}>
+    <div style={{ backgroundImage: "url('../palm/BGPALM.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", overflowX: "hidden", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center"}}>
     <div style={styles.container}>
       <h1 style={styles.title}>สถานที่นี้คือ</h1>
       <p style={styles.description}>ค่า hash ที่ต้องการ : 03d8062c0e681102a93f92a43f513a97926665b9dba8b16a9c7527d288098d40</p>

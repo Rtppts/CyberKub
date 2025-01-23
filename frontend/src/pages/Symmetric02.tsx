@@ -61,7 +61,7 @@ const Sym = () => {
   const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนเส้นทาง
 
   // เป้าหมายที่ถูกต้อง (สุ่ม)
-  const targetColor = "blue";
+  const targetColor = "#3399ff";
 
   // ฟังก์ชันสำหรับปลดล็อกคำใบ้
   // ฟังก์ชันสำหรับปลดล็อกคำใบ้
