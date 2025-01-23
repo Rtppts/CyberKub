@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // ใช้ createRoot แทน react-dom
 import { BrowserRouter } from 'react-router-dom';

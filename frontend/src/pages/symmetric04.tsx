@@ -63,6 +63,7 @@ const App = () => {
       alert("❌ กรุณาใส่ Private Key เป็นตัวเลข!");
       return;
     }
+    // @ts-ignore
     setDecryptedKey(userPrivateKey);
   };
 
