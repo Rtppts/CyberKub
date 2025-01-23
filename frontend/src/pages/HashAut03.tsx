@@ -1,10 +1,8 @@
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
+// @ts-ignore
 import { /*SetStateAction,*/ useState } from "react";
-=======
 // @ts-ignore
 import { SetStateAction, useState } from "react";
->>>>>>> main
 import sha256 from "crypto-js/sha256";
 const BGaut = "/aut/BGAUT.png";
 
