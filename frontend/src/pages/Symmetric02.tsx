@@ -1,4 +1,6 @@
 // Import React และ useNavigate
+// import { useState } from "react";
+// @ts-ignore
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
