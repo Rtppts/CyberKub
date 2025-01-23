@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
+import { /*SetStateAction,*/ useState } from "react";
+=======
 // @ts-ignore
 import { SetStateAction, useState } from "react";
+>>>>>>> main
 import sha256 from "crypto-js/sha256";
+const BGaut = "/aut/BGAUT.png";
 
 function HashAut() {
     const navigate = useNavigate();
@@ -35,7 +40,7 @@ function HashAut() {
     };
 
     return (
-        <div style={{ backgroundImage: "url('../../public/aut/BGAUT.png')", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ backgroundImage: `url(${BGaut})`, height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <div style={{ width: "600px", padding: "40px", backgroundColor: "rgba(0, 0, 0, 0.9)", color: "white", textAlign: "center", borderRadius: "15px", boxShadow: "0px 0px 20px rgba(0, 0, 255, 1)", border: "5px solid white", fontFamily: "Arial, sans-serif" }}>
                 <img src="../../public/aut/nullavatar.png" alt="" style={{ width: "150px", height: "150px", borderRadius: "50%", marginBottom: "20px" }} />
                 <h1 style={{ fontSize: "30px", fontWeight: "bold", marginBottom: "20px" }}>อาจารย์ ดร. วิชัย</h1>

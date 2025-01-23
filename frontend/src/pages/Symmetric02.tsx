@@ -1,6 +1,10 @@
 // Import React และ useNavigate
+<<<<<<< HEAD
+import /*React,*/ { useState } from "react";
+=======
 // @ts-ignore
 import React, { useState } from "react";
+>>>>>>> main
 import { useNavigate } from "react-router-dom";
 
 // ฟังก์ชันสำหรับเข้ารหัสและถอดรหัสแบบ Symmetric (Caesar Cipher ตัวอย่าง)

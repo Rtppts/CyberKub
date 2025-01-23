@@ -53,7 +53,7 @@ const sampleData = [
 const App = () => {
   const navigate = useNavigate();
   const [privateKeyInput, setPrivateKeyInput] = useState("");
-  const [decryptedKey, setDecryptedKey] = useState(null);
+  const [decryptedKey, setDecryptedKey] = useState<number | null>(null);
   const [hints, setHints] = useState([false, false, false]);
 
   // ฟังก์ชันตรวจสอบค่ากุญแจส่วนตัว
